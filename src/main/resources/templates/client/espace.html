@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Espace — ParcelFlow</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <style>
+        .profile-card { text-align: center; padding: 20px; }
+        .profile-card .avatar {
+            width: 80px; height: 80px; background: var(--brand-blue);
+            color: white; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 800; margin: 0 auto 15px;
+            box-shadow: 0 8px 20px rgba(36, 81, 224, 0.3);
+        }
+        .profile-info h2 { margin: 0; font-size: 22px; letter-spacing: -0.02em; }
+        .profile-info p { margin: 5px 0; color: var(--text-muted); font-size: 14px; }
+
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .action-card {
+            background: white; border-radius: 16px; padding: 16px;
+            text-align: center; text-decoration: none; color: var(--text-main);
+            box-shadow: var(--card-shadow); transition: transform 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .action-card:active { transform: scale(0.95); }
+        .action-card .icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: var(--input-bg); color: var(--brand-blue);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .action-card span { font-size: 13px; font-weight: 600; }
+
+        .orders-section { margin-top: 25px; }
+        .orders-section h3 { font-size: 16px; margin-bottom: 15px; padding-left: 5px; }
+        .order-item {
+            background: white; border-radius: 16px; padding: 16px;
+            margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--brand-blue);
+        }
+        .order-item .info h4 { margin: 0; font-size: 14px; }
+        .order-item .info p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
+        .status-badge {
+            font-size: 10px; font-weight: 700; padding: 4px 8px;
+            border-radius: 99px; text-transform: uppercase;
+            background: #eef1fb; color: var(--brand-blue);
+        }
+        .status-VALIDEE { background: #e9f7ef; color: #1e7e42; }
+        .status-LIVREE { background: #fefce8; color: #a16207; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div th:replace="~{fragments/header :: header('ParcelFlow', 'Client')}"></div>
+
+    <div class="auth-header">
+        <h1>Mon Espace</h1>
+        <p>Bienvenue dans votre zone personnelle</p>
+    </div>
+
+    <div class="card profile-card">
+        <div class="avatar" th:text="${#strings.substring(username, 0, 1)}">U</div>
+        <div class="profile-info">
+            <h2 th:text="${username}">Nom Utilisateur</h2>
+            <p th:text="${email}">email@example.com</p>
+            <p th:text="${telephone}">+225 00 00 00 00</p>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a th:href="@{/client/orders/new}" class="action-card">
+            <div class="icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <span>Nouvelle Expédition</span>
+        </a>
+        <a href="#" class="action-card">
+            <div class="icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span>Mon Profil</span>
+        </a>
+    </div>
+
+    <div class="orders-section">
+        <h3>Mes Dernières Expéditions</h3>
+        <div th:each="order : ${orders}" class="order-item">
+            <div class="info">
+                <h4 th:text="'Commande #' + ${order.id}">#0</h4>
+                <p th:text="${#temporals.format(order.dateCommande, 'dd MMM yyyy')}"></p>
+                <p th:text="${order.montantTotal + ' FCFA'}"></p>
+            </div>
+            <span class="status-badge" th:classappend="' status-' + ${order.statut}" th:text="${order.statut}">STATUT</span>
+        </div>
+        <div th:if="${#lists.isEmpty(orders)}" style="text-align:center; color: var(--text-muted); padding: 20px;">
+            Aucune expédition pour le moment.
+        </div>
+    </div>
+</div>
+</body>
+</html>
